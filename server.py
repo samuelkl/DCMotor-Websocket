@@ -7,12 +7,13 @@ import tornado.ioloop
 import tornado.web
 import pigpio
 
-#Initialize Raspberry PI GPIO
+#GPIO pins
 enA1 = 12
 enB1 = 13
 enA2 = 7
 enB2 = 6
 
+#Start up Pigpio
 pi = pigpio.pi() 
 pi.set_mode(enA1, pigpio.OUTPUT)
 pi.set_mode(enB1, pigpio.OUTPUT)
@@ -22,11 +23,9 @@ pi.set_mode(enB2, pigpio.OUTPUT)
 #Tonado server port
 PORT = 80
 
-
 class MainHandler(tornado.web.RequestHandler):
   def get(self):
      print ("[HTTP](MainHandler) User Connected.")
-
 	
 class WSHandler(tornado.websocket.WebSocketHandler):
   def open(self):
@@ -66,8 +65,7 @@ class WSHandler(tornado.websocket.WebSocketHandler):
           gpioWrite(enB1,0)
           gpioWrite(enB2,0)
 
-
-
+	
   def on_close(self):
     print ('[WS] Connection was closed.')
     pi.write(enA1,0)
