@@ -5,7 +5,7 @@ import tornado.httpserver
 import tornado.websocket
 import tornado.ioloop
 import tornado.web
-import pigpio.h
+import pigpio
 
 #Initialize Raspberry PI GPIO
 enA1 = 12
