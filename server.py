@@ -5,28 +5,19 @@ import tornado.httpserver
 import tornado.websocket
 import tornado.ioloop
 import tornado.web
-import RPi.GPIO as GPIO
 import pigpio.h
 
 #Initialize Raspberry PI GPIO
-
-#GPIO.setmode(GPIO.BOARD)
-
-#GPIO.setup(11, GPIO.OUT)
-#GPIO.setup(13, GPIO.OUT)
-#GPIO.setup(16, GPIO.OUT)
-#GPIO.setup(18, GPIO.OUT)
-
 enA1 = 12
 enB1 = 13
-enA2 = 1
+enA2 = 7
 enB2 = 6
 
-gpioInitialise();
-gpioSetMode(enA1, PI_OUTPUT);
-gpioSetMode(enB1, PI_OUTPUT);
-gpioSetMode(enA2, PI_OUTPUT);
-gpioSetMode(enB2, PI_OUTPUT);
+pi = pigpio.pi() 
+pi.set_mode(enA1, pigpio.OUTPUT)
+pi.set_mode(enB1, pigpio.OUTPUT)
+pi.set_mode(enA2, pigpio.OUTPUT)
+pi.set_mode(enB2, pigpio.OUTPUT)
 
 #Tornado Folder Paths
 settings = dict(
@@ -51,45 +42,45 @@ class WSHandler(tornado.websocket.WebSocketHandler):
   def on_message(self, message):
     print ('[WS] Incoming message:'), message
     motor = message[0]
-    speed = message[1:3]
+    speed = message[1:]
     speedInt = int(speed)
 
     if motor == "l":
       print ('Left Motor Rotates at '), speed
       if speedInt > 0:
-          #gpioWrite(enA1, 0)
-          #gpioPWM(enA2, speedInt)
-           print ("l1")
+          pi.write(enA1, 0)
+          pi.set_PWM_dutycycle(enA2, speedInt)
+
       else:
-          #gpioWrite(enA2,0)
-          #gpioPWM(enA1, speedInt*-1)
-          print ("l2")
+          pi.write(enA2,0)
+          pi.set_PWM_dutycycle(enA1, speedInt*-1)
+
 
     if motor == "r":
       print ('Right Motor Rotates at '), speed
       if speedInt > 0:
-          #gpioWrite(enB1, 0)
-          #gpioPWM(enB2, speedInt)
-          print ("r1")
+          pi.write(enB1, 0)
+          pi.set_PWM_dutycycle(enB2, speedInt)
+
       else:
-          #gpioWrite(enB2,0)
-          #gpioPWM(enB1, speedInt*-1)
-          print ("r2")
+          pi.write(enB2,0)
+          pi.set_PWM_dutycycle(enB1, speedInt*-1)
+
 
     if motor == "o":
-          #gpioWrite(enA1,0)
-          #gpioWrite(enA2,1)
-          #gpioWrite(enB1,0)
-          #gpioWrite(enB2,0)
-          print ("3")
+          pi.write(enA1,0)
+          pi.write(enA2,0)
+          gpioWrite(enB1,0)
+          gpioWrite(enB2,0)
+
 
 
   def on_close(self):
     print ('[WS] Connection was closed.')
-    #gpioWrite(enA1,0)
-    #gpioWrite(enA2,1)
-    #gpioWrite(enB1,0)
-    #gpioWrite(enB2,0)
+    pi.write(enA1,0)
+    pi.write(enA2,0)
+    pi.write(enB1,0)
+    pi.write(enB2,0)
 
 
 application = tornado.web.Application([
@@ -109,6 +100,6 @@ if __name__ == "__main__":
 
     except:
         print ("Exception triggered - Tornado Server stopped.")
-        GPIO.cleanup()
 
 #End of Program
+
