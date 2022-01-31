@@ -19,6 +19,12 @@ pi.set_mode(enB1, pigpio.OUTPUT)
 pi.set_mode(enA2, pigpio.OUTPUT)
 pi.set_mode(enB2, pigpio.OUTPUT)
 
+#Tornado Folder Paths
+settings = dict(
+	template_path = os.path.join(os.path.dirname(__file__), "templates"),
+	static_path = os.path.join(os.path.dirname(__file__), "static")
+	)
+
 #Tonado server port
 PORT = 80
 
@@ -26,6 +32,7 @@ PORT = 80
 class MainHandler(tornado.web.RequestHandler):
   def get(self):
      print ("[HTTP](MainHandler) User Connected.")
+     self.render("index.html")
 
 	
 class WSHandler(tornado.websocket.WebSocketHandler):
@@ -79,7 +86,7 @@ class WSHandler(tornado.websocket.WebSocketHandler):
 application = tornado.web.Application([
   (r'/', MainHandler),
   (r'/ws', WSHandler),
-  ])
+  ], **settings)
 
 
 if __name__ == "__main__":
@@ -95,4 +102,3 @@ if __name__ == "__main__":
         print ("Exception triggered - Tornado Server stopped.")
 
 #End of Program
-
