@@ -10,7 +10,7 @@ import pigpio
 #GPIO pins
 enA1 = 12
 enB1 = 13
-enA2 = 7
+enA2 = 1
 enB2 = 6
 
 #Start up Pigpio
