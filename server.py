@@ -62,8 +62,8 @@ class WSHandler(tornado.websocket.WebSocketHandler):
     if motor == "o":
           pi.write(enA1,0)
           pi.write(enA2,0)
-          gpioWrite(enB1,0)
-          gpioWrite(enB2,0)
+          pi.write(enB1,0)
+          pi.write(enB2,0)
 
 	
   def on_close(self):
